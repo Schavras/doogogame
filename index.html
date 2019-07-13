@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<style>
+		* {
+			padding: 0;
+			margin: 0;
+		}
+
+		#screen {
+			display: block;
+			width: 100%;
+			height: 100vh;
+			/*background-color: rgb(0, 0, 0);*/
+		}
+
+		#title {
+			font-family: Comic Sans MS Arial serif;
+			display: inline-block;
+			/*margin: 50vh auto;*/
+			/*width: 716px;*/
+			font-size: 48px;
+			position: absolute;
+		}
+
+		#title img {
+			width: 200px;
+			cursor: grab;
+			transform: rotate(90deg);
+
+		}
+	</style>
+</head>
+<body>
+<div id="screen" onmousedown="onMiss(this)">
+	<h1>Click the Doggo!</h1>
+	<button onclick="start()">Start</button>
+	<button onclick="stopInterval()">Stop</button>
+	<h1 id="scoreText">Score: 1</h1>
+	<h1 id="timerText">Remaining: 60 seconds</h1>
+	<h1></h1>
+	<div id="title" onmousedown="oncClick()">
+		<img id="img" src="./doggo.jpg" alt="">
+	</div>
+</div>
+<script>
+    let red = 255;
+    let green = 0;
+    let blue = 0;
+
+    let score = 0;
+
+    const el = document.getElementById('screen');
+    const title = document.getElementById('title');
+    const img = document.getElementById('img');
+    const scoreText = document.getElementById('scoreText');
+    const timerText = document.getElementById('timerText');
+
+    let screenRight = el.offsetWidth;
+    let screenBottm = el.offsetHeight;
+
+    let topPosition = title.offsetTop;
+    let leftPosition = title.offsetLeft;
+    let rightPosition = leftPosition + title.offsetWidth;
+    let bottmPosition = topPosition + title.offsetHeight;
+    let rotation = 0;
+    let xStep = 1;
+    let yStep = 1;
+    let rStep = 1;
+    let interval
+
+    function start() {
+        rotation = 0;
+        xStep = 1;
+        yStep = 1;
+        rStep = 1;
+        rotation = 0;
+        xStep = 1;
+        yStep = 1;
+        rStep = 1;
+        score = 0;
+        interval = setInterval(() => {
+
+            colorChange();
+
+            el.style.backgroundColor = `rgb(${red},${green},${blue})`;
+            scoreText.style.color = `rgb(${255 - red},${255 - green},${255 - blue})`;
+            topPosition += yStep;
+            leftPosition += xStep;
+            title.style.top = topPosition + 'px';
+            title.style.left = leftPosition + 'px';
+            rotation += rStep;
+            if (rotation > 360) rotation = 0;
+            img.style.transform = `rotate(${rotation}deg)`
+            updatePosition();
+            scoreText.innerText = "Score:" + score;
+            if (bottmPosition > screenBottm) {
+                yStep = -1 * yStep;
+            }
+            if (topPosition < 0) {
+                yStep = -1 * yStep;
+            }
+            if (rightPosition + 1 > screenRight) {
+                xStep = -1 * xStep;
+            }
+            if (leftPosition < 0) {
+                xStep = -1 * xStep;
+            }
+
+        }, 5);
+
+        let timeRemaining = 10;
+        timerText.innerText = `Remaining: ${timeRemaining} seconds`
+
+        let timer = setInterval(() => {
+            timeRemaining--;
+            timerText.innerText = `Remaining: ${timeRemaining} seconds`
+            if (timeRemaining === 0) {
+                clearInterval(timer)
+                stopInterval();
+            }
+        }, 1000)
+
+    }
+
+    start();
+
+    // clearInterval(interval);
+
+    function colorChange() {
+        if (red === 255 && green === 0) {
+            blue++;
+        }
+        if (green === 255 && red === 0) {
+            blue--;
+        }
+
+        if (blue === 255 && green === 0) {
+            red--;
+        }
+
+        if (blue === 0 && green === 0) {
+            red++;
+        }
+
+
+        if (blue === 255 && red === 0) {
+            green++;
+        }
+
+        if (red === 0 && blue === 0) {
+            green--;
+        }
+    }
+
+    function oncClick() {
+        score += 2;
+        let changeY = Math.random() > 0.5;
+        let changeX = Math.random() > 0.5;
+        let changeR = Math.random() > 0.5;
+        // if (!changeX && !changeX) changeR = true;
+        yStep = changeY ? -1 * yStep : yStep + 1;
+        xStep = changeX ? -1 * xStep : xStep + 1;
+        rStep = changeR ? -1 * rStep : rStep + 1;
+    }
+
+    function updatePosition() {
+        // topPosition = title.offsetTop;
+        // leftPosition = title.offsetLeft;
+        rightPosition = leftPosition + title.offsetWidth;
+        bottmPosition = topPosition + title.offsetHeight;
+    }
+
+    function onMiss(e) {
+        score--;
+    }
+
+    function stopInterval() {
+        clearInterval(interval)
+    }
+</script>
+</body>
+</html>
